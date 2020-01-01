@@ -1,19 +1,23 @@
-import urllib3
+import requests
 from bs4 import BeautifulSoup
 import sqlite3
 
+# scraping craigslist - specify search terms, filter by 'new' in results, & saving results to slqlite db
 
 def get_results():
 
-    parameters = ['dildo', 'sofa']
+    parameters = ['dildo', 'sofa', 'shoes' ]
+
     filtered_results = []
 
     for parameter in parameters:
-        url = "https://london.craigslist.org/search/sss?query=" + parameter
-        ourUrl = urllib3.PoolManager().request('GET', url).data
-        soup = BeautifulSoup(ourUrl, "lxml")
-        results = soup.findAll('a', attrs={'class': 'result-title hdrlnk'})
 
+        payload = {'query': parameter}
+
+        url = "https://london.craigslist.org/search/sss"
+        r = requests.get(url, params=payload)
+        soup = BeautifulSoup(r.text, "lxml")
+        results = soup.findAll('a', attrs={'class': 'result-title hdrlnk'})
 
         for result in results:
             if "new" in result.text.lower():
@@ -58,7 +62,7 @@ def store_results(filtered_results):
         update_table = '''INSERT INTO Search_results (result)
                                         VALUES
                                         (?);'''
-        breakpoint()
+        #breakpoint()
 
         for filtered_result in filtered_results:
 
@@ -85,14 +89,13 @@ def store_results(filtered_results):
 
 
 
-
 def main():
     results = get_results()
     create_db()
     store_results(results)
 
-
+# tells python this file is being run as a script
 if __name__ == '__main__':
     main()
-    # if this file is being run as a script
+
 
