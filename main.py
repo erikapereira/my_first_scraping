@@ -1,12 +1,13 @@
 import requests
 from bs4 import BeautifulSoup
 import sqlite3
+import re
 
 # scraping craigslist - specify search terms, filter by 'new' in results, & saving results to slqlite db
 
 def get_results():
 
-    parameters = ['dildo', 'sofa', 'shoes' ]
+    parameters = ['dildo', 'sofa', 'shoes', 'sunglasses']
 
     filtered_results = []
 
